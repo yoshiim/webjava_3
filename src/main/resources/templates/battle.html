@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>バトルゲーム</title>
+</head>
+<body>
+
+
+<!-- 選択フォームの場合はこちら -->
+<th:block th:if="${battleForm}">
+  <form action="#" th:action="@{/battle}" th:object="${battleForm}" method="post">
+    <h2>★バトルゲームへようこそ★</h2>
+    <h4>　プレイヤー、ステージ、難易度を選択してください</h4>
+    <p>　プレイヤー：
+      <select name="プレイヤー選択" th:field="*{player}">
+        <option value="1">剣士</option>
+        <option value="2">魔法使い</option>
+        <option value="3">斧使い</option>
+      </select>
+    </p>
+    <p>　ステージ：
+      <select name="ステージ選択" th:field="*{stage}">
+        <option value="1">3連戦ステージ</option>
+        <option value="2">5連戦ステージ</option>
+        <option value="3">10連戦ステージ</option>
+      </select>
+    </p>
+    <p>　難易度：
+      <select name="難易度選択" th:field="*{difficulty}">
+        <option value="1">簡単</option>
+        <option value="2">普通</option>
+        <option value="3">難しい</option>
+      </select>
+    </p>
+    <p><input type="submit" value="バトルを開始" name="select"/></p>
+  </form>
+</th:block>
+
+<th:block th:if="${player}">
+    <th:block th:if="${turnForm}">
+      <h2>
+        <span th:text="'第' + ${turnForm.times} + '戦　　　' + ${enemy.name} + 'が現れた！'"></span>
+      </h2>
+    </th:block>
+
+    <table>
+      <tr>
+        <td colspan="2" align="center">
+          <h4><span th:text="${player.name}" /></h4>
+        </td>
+        <td></td>
+        <td colspan="2" align="center">
+          <h4><span th:text="${enemy.name}" /></h4>
+        </td>
+      </tr>
+      <tr>
+        <td width="150" align="center">職　　　業</td>
+        <td width="150" align="center"><span th:text="${player.job}" /></td>
+        <td width="100" align="center" rowspan="6">VS</td>
+        <td width="150" align="center">種　　　別</td>
+        <td width="150" align="center"><span th:text="${enemy.name}" /></td>
+      </tr>
+      <tr>
+        <td width="150" align="center">Ｈ　　　Ｐ</td>
+        <td width="150" align="center"><span th:text="${player.hitPoint}" /></td>
+        <td width="150" align="center">Ｈ　　　Ｐ</td>
+        <td width="150" align="center"><span th:text="${enemy.hitPoint}" /></td>
+      </tr>
+      <tr>
+        <td width="150" align="center">攻　撃　力</td>
+        <td width="150" align="center"><span th:text="${player.attack}" /></td>
+        <td width="150" align="center">攻　撃　力</td>
+        <td width="150" align="center"><span th:text="${enemy.attack}" /></td>
+      </tr>
+      <tr>
+        <td width="150" align="center">防　御　力</td>
+        <td width="150" align="center"><span th:text="${player.defense}" /></td>
+        <td width="150" align="center">防　御　力</td>
+        <td width="150" align="center"><span th:text="${enemy.defense}" /></td>
+      </tr>
+      <tr>
+        <td width="150" align="center">魔法攻撃力</td>
+        <td width="150" align="center"><span th:text="${player.magicAttack}" /></td>
+        <td width="150" align="center">魔法攻撃力</td>
+        <td width="150" align="center"><span th:text="${enemy.magicAttack}" /></td>
+     </tr>
+      <tr>
+        <td width="150" align="center">魔法防御力</td>
+        <td width="150" align="center"><span th:text="${player.magicDefense}" /></td>
+        <td width="150" align="center">魔法防御力</td>
+        <td width="150" align="center"><span th:text="${enemy.magicDefense}" /></td>
+      </tr>
+    </table>
+
+  <th:block th:if="${player.hitPoint gt 0 and enemy.hitPoint gt 0}">
+    <br/>
+    <p>　何をするか選んでください</p>
+    <table><tr>
+      <td width="150" align="center">
+        <form width="100" action="#" th:action="@{/battle/turn}" th:object="${turnForm}" method="post">
+          <select th:field="*{select}" style="display:none"><option value="attack" /></select>
+          <input type="submit" value="攻撃"/>
+        </form>
+      </td>
+      <td width="150" align="center">
+        <form action="#" th:action="@{/battle/turn}" th:object="${turnForm}" method="post">
+          <select th:field="*{select}" style="display:none"><option value="magic" /></select>
+          <input type="submit" value="魔法攻撃"/>
+        </form>
+      </td>
+    </tr><tr>
+      <td width="150" align="center">
+        <form action="#" th:action="@{/battle/turn}" th:object="${turnForm}" method="post">
+          <select th:field="*{select}" style="display:none"><option value="heal" /></select>
+          <input type="submit" value="回復"/>
+        </form>
+      </td>
+      <td width="150" align="center">
+        <form action="#" th:action="@{/battle/turn}" th:object="${turnForm}" method="post">
+          <select th:field="*{select}" style="display:none"><option value="away" /></select>
+          <input type="submit" value="逃げる"/>
+        </form>
+      </td>
+    </tr></table>
+  </th:block>
+  <th:block th:if="${player.hitPoint le 0 or enemy.hitPoint le 0}">
+    <th:block th:if="${player.hitPoint le 0}">
+      <p><br/><br/>ゲームオーバー<br/><br/></p>
+    </th:block>
+    <th:block th:if="${enemy.hitPoint le 0}">
+      <p><br/><br/>クリア<br/><br/></p>
+    </th:block>
+    <form action="#" th:action="@{/battle/end}" method="post">
+      <input type="submit" value="最初から"/>
+    </form>
+  </th:block>
+</th:block>
+
+<th:block th:each="message:${messageList}">
+  <p><span th:text="*{message}"></span></p>
+</th:block>
+
+</body>
+</html>
